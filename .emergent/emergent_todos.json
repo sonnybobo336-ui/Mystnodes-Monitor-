@@ -1,6 +1,6 @@
 [
   {
-    "content": "Phase 1: POC integrations (CoinGecko, Mystnodes, Tailscale, wallets, Claude AI)",
+    "content": "Phase 1: POC integrations",
     "status": "completed"
   },
   {
@@ -8,7 +8,7 @@
     "status": "completed"
   },
   {
-    "content": "Phase 2: Backend - auto-withdrawal scheduler (every 5 days) with notifications log",
+    "content": "Phase 2: Backend - auto-withdrawal scheduler",
     "status": "completed"
   },
   {
@@ -16,11 +16,11 @@
     "status": "completed"
   },
   {
-    "content": "Phase 2: Settings panel for Mystnodes/Tailscale credentials",
+    "content": "Phase 2: Settings panel for credentials",
     "status": "completed"
   },
   {
-    "content": "Phase 2: End-to-end testing with testing_agent_v3",
-    "status": "in_progress"
+    "content": "Phase 2: End-to-end testing (16/16 backend passed)",
+    "status": "completed"
   }
 ]
