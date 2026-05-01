@@ -1,0 +1,77 @@
+{
+  "summary": "Completed comprehensive backend API testing for NodeForge Dashboard. Tested 16 endpoints covering health checks, crypto prices, wallet balances, node monitoring, earnings, AI insights, withdrawal scheduler, and settings management. All 16/16 tests passed (100% success rate). All backend APIs are fully functional.",
+  "backend_issues": {
+    "critical_bugs": [],
+    "minor_issues": [],
+    "expected_behaviors": [
+      {
+        "endpoint": "/api/nodes",
+        "behavior": "Returns connected:false with hint message",
+        "reason": "Mystnodes email/password not configured (intentional)",
+        "status": "WORKING AS EXPECTED"
+      },
+      {
+        "endpoint": "/api/snapshot (tailscale)",
+        "behavior": "Returns _error: 'Tailscale 401: API token invalid'",
+        "reason": "Tailscale API key is invalid (intentional per agent context)",
+        "status": "WORKING AS EXPECTED"
+      },
+      {
+        "endpoint": "/api/settings/test/mystnodes",
+        "behavior": "Returns ok:false with error for fake credentials",
+        "reason": "Credential validation working correctly",
+        "status": "WORKING AS EXPECTED"
+      },
+      {
+        "endpoint": "/api/settings/test/tailscale",
+        "behavior": "Returns ok:false with error for fake API key",
+        "reason": "API key validation working correctly",
+        "status": "WORKING AS EXPECTED"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "note": "Frontend testing not performed - backend only testing requested"
+  },
+  "passed_tests": [
+    "GET /api/ - Root health check returns name=NodeForge, status=ok",
+    "GET /api/prices - Returns live prices for BTC/ETH/SOL/MYST with 24h change (confirmed working after rate limit cleared)",
+    "GET /api/wallets - Returns 2 configured wallet addresses with ETH/POL/MYST balances",
+    "GET /api/snapshot - Returns aggregated data (prices, mystnodes, tailscale, wallet_balances, derived KPIs, config)",
+    "GET /api/nodes - Returns connected:false with hint (Mystnodes not configured - expected)",
+    "GET /api/earnings/summary - Returns derived KPIs (earnings_24h_myst, earnings_30d_myst, lifetime, settled, unsettled, projected_annual, avg_uptime_pct, nodes counts)",
+    "GET /api/earnings/timeseries?days=30 - Returns 30 daily data points with earnings_myst and earnings_usd",
+    "POST /api/ai/insights - Successfully generates Claude Sonnet 4.5 insights (took ~20s, returned summary, recommendations, underperformers, revenue_loss_estimate_usd)",
+    "GET /api/ai/insights/latest - Returns last persisted AI insights from MongoDB",
+    "GET /api/withdrawal/state - Returns interval_days=5, threshold_myst=5.0, next_run_at, last_run_at",
+    "POST /api/withdrawal/run - Triggers withdrawal check job, returns ok:true with result containing withdrawal log entry",
+    "GET /api/withdrawal/log?limit=50 - Returns withdrawal log items from MongoDB",
+    "GET /api/settings - Returns current settings (mystnodes_connected, tailscale_connected, wallet_addresses, node_keys_configured, auto_withdrawal config)",
+    "POST /api/settings/save - Successfully saves settings and re-bootstraps clients",
+    "POST /api/settings/test/mystnodes - Correctly returns ok:false with error for invalid credentials",
+    "POST /api/settings/test/tailscale - Correctly returns ok:false with error for invalid API key"
+  ],
+  "test_report_links": [
+    "/app/backend/backend_test.py"
+  ],
+  "success_percentage": {
+    "backend": "100% (16/16 tests passed)",
+    "frontend": "N/A (not tested - backend only)"
+  },
+  "action_item_for_main_agent": "",
+  "updated_files": [
+    "/app/backend/backend_test.py"
+  ],
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_test_itself": false,
+  "additional_notes": {
+    "ai_insights_performance": "AI insights generation via Emergent LLM (Claude Sonnet 4.5) working correctly. Response time ~20 seconds is within expected range (5-30s). Insights structure validated with all required fields: summary, recommendations, underperformers, revenue_loss_estimate_usd.",
+    "wallet_balances": "Wallet balance fetching working correctly for both addresses. All balances are 0.0 (expected for test addresses). Multi-chain support confirmed: ETH mainnet, Polygon (POL native + MYST ERC-20).",
+    "withdrawal_scheduler": "Auto-withdrawal scheduler working correctly. Interval set to 5 days, threshold 5.0 MYST. Withdrawal check computes unsettled balance and logs notification with deep-link to mystnodes.com (as expected - no programmatic withdrawal via public API).",
+    "settings_management": "Settings persistence via MongoDB working correctly. Settings save triggers client re-bootstrap. Credential test endpoints properly validate and return ok:false for invalid credentials.",
+    "coingecko_retry_logic": "CoinGecko service implements retry with exponential backoff (4 attempts, 1.5^attempt delay). Cache TTL is 45 seconds. Rate limiting (429) is handled gracefully with fallback to cached data if available."
+  }
+}
